@@ -1,0 +1,86 @@
+/*
+2015.1.10----------
+やること
+actionlib serverであること
+内部でreq/resできるようにすること
+amclからの自己位置をサブスクライブできるようにすること
+
+目的地をパブリッシュすること
+
+
+
+*/
+
+#include <ros/ros.h>
+#include <actionlib/server/simple_action_server.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include "humans_msgs/GoalJudge.h"
+
+//actionのヘッダをインクルードする。どういう形になるかは、書いてみないと分からん
+
+using namespace std;
+
+class GoalJudge
+{
+private:
+  ros::NodeHandle n;
+  actionlib::SimpleActionServer<humans_msgs::GoalJudge> as_;
+  //actionlibにつかういろいろ
+  string action_name_;
+  string goal_name;
+
+  humans_msgs::GoalJudgeFeedback feedback_;
+  humans_msgs::GoalJudgeResult result_;
+
+  ros::Subscriber amcl_sub_;
+
+
+
+public:
+  GoalJudge( string name )
+    :as_( n, name, false ),
+     action_name_( name )
+  {
+    as_.registerGoalCallback( boost::bind( &GoalJudge::goalCB, this ) );
+    as_.registerPreemptCallback( boost::bind( &GoalJudge::preemptCB, this ) );
+
+    amcl_sub_ = n.subscribe("amcl_pose", 1, &GoalJudge::robotPoseCB, this);
+
+    as_.start();
+  }
+
+  ~GoalJudge( void )
+  {
+  }
+
+  void goalCB()
+  {
+    //おそらく、ここで目的を記述していく
+    goal_name = as_.acceptNewGoal()->name;
+  }
+
+  void preemptCB()
+  {
+    ROS_INFO("%s: Preempted", action_name_.c_str());
+    as_.setPreempted();
+  }
+
+  void robotPoseCB(const geometry_msgs::PoseWithCovarianceStampedConstPtr& pose)
+  {
+    //ロボットの位置がサブスクライブされる度にコールバックされる
+    //この内部で、Aの位置をreq/resする
+    //また。goal_setterに目的位置をpubする
+
+    ac_.setSucceeded(result_);
+
+  }
+
+};
+
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "goal_judge");
+  GoalJudge GJObject( ros::this_node::getName() );
+  ros::spin();
+  return 0;
+}
