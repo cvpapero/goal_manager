@@ -10,11 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
   humans_msgs
-  costmap_2d
-  rotate_recovery
-  nav_core
-  move_base
-  base_local_planner
 )
 
 ## System dependencies are found with CMake's conventions
@@ -172,17 +167,20 @@ include_directories(
 add_executable(sample1 src/sample1.cpp)
 target_link_libraries(sample1 ${catkin_LIBRARIES})
 
-add_executable(goal_setter src/goal_setter.cpp)
-target_link_libraries(goal_setter ${catkin_LIBRARIES})
+add_executable(goal_setter3 src/goal_setter3.cpp)
+target_link_libraries(goal_setter3 ${catkin_LIBRARIES})
 
-add_executable(people_position_server src/people_position_server.cpp)
-target_link_libraries(people_position_server ${catkin_LIBRARIES})
+#add_executable(people_position_server src/people_position_server.cpp)
+#target_link_libraries(people_position_server ${catkin_LIBRARIES})
 
-add_executable(goal_decider2 src/goal_decider2.cpp)
-target_link_libraries(goal_decider2 ${catkin_LIBRARIES})
+add_executable(goal_decider3 src/goal_decider3.cpp)
+target_link_libraries(goal_decider3 ${catkin_LIBRARIES})
 
 add_executable(goal_manager src/goal_manager.cpp)
 target_link_libraries(goal_manager ${catkin_LIBRARIES})
 
 add_executable(wander src/wander.cpp)
 target_link_libraries(wander ${catkin_LIBRARIES})
+
+add_executable(wander_action src/wander_action.cpp)
+target_link_libraries(wander_action ${catkin_LIBRARIES})

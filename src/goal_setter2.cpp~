@@ -1,8 +1,11 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
+#include <actionlib/server/simple_action_server.h>
 #include <move_base_msgs/MoveBaseAction.h>
+#include "humans_msgs/GoalJudgeAction.h"
 
 #include <tf/transform_listener.h>
+
 
 #include <cstdlib>
 #include <ctime>
@@ -11,31 +14,29 @@
 
 using namespace std;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MBClient;
+typedef actionlib::SimpleActionServer<humans_msgs::GoalJudgeAction> GJServer;
 
-/*
-class GoalPose
-{
-public:
-  double px;
-  double py;
-  double qz;
-  double qw;
-}
-*/
 
 map<int, geometry_msgs::Pose> pose;
 
 class Wander
 {
 private:
+  ros::NodeHandle n;
   MBClient ac;
+  GJServer as;
+  std::string action_name;
   move_base_msgs::MoveBaseGoal goal;
   int pre_goal_id;
   int next_goal_id;
-  //double pass[6][6]; 
+  humans_msgs::GoalJudgeActionFeedback feedback;
+  humans_msgs::GoalJudgeActionResult result;
 
 public:
-  Wander() : ac("move_base", true)
+  Wander(std::string name) 
+    : ac("move_base", true),
+      as(n, name, false),
+      action_name(name)
   {
     ROS_INFO("Waiting for action server to start.");
     ac.waitForServer();
@@ -80,6 +81,10 @@ public:
     pose[5] = tmp;
 
 
+    as.registerGoalCallback(boost::bind(&Wander::goalCb, this));
+    as.registerPreemptCallback(boost::bind(&Wander::preemptCb, this));
+
+    as.start();
   }
 
   ~Wander()
@@ -87,6 +92,16 @@ public:
     pose.clear();
   }
 
+  void goalCb()
+  {
+    goalDecider(4);
+  }
+
+  void preemptCb()
+  {
+    ROS_INFO("%s: Preempted", action_name.c_str());
+    as.setPreempted();
+  }
   //ゴール地点番号を与えられたら、ゴールをその地点番号に結びついた値にセットする
   void goalSender(int id)
   {
@@ -227,9 +242,9 @@ public:
 
 int main(int argc, char** argv)
 {
-  ros::init( argc, argv, "wander" );
-  Wander WObj;
-  WObj.goalDecider(4);
+  ros::init( argc, argv, "wander_action" );
+  Wander WObj(ros::this_node::getName());
+  //WObj.goalDecider(4);
 
   ros::spin();
   return 0;
