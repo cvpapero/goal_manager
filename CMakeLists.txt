@@ -182,5 +182,11 @@ target_link_libraries(goal_manager ${catkin_LIBRARIES})
 add_executable(wander src/wander.cpp)
 target_link_libraries(wander ${catkin_LIBRARIES})
 
-add_executable(wander_action src/wander_action.cpp)
-target_link_libraries(wander_action ${catkin_LIBRARIES})
+add_executable(wander2 src/wander2.cpp)
+target_link_libraries(wander2 ${catkin_LIBRARIES})
+
+add_executable(goal_wander src/goal_wander.cpp)
+target_link_libraries(goal_wander ${catkin_LIBRARIES})
+
+add_executable(now_position src/now_position.cpp)
+target_link_libraries(now_position ${catkin_LIBRARIES})
