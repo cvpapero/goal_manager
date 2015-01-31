@@ -170,6 +170,9 @@ target_link_libraries(sample1 ${catkin_LIBRARIES})
 add_executable(goal_setter3 src/goal_setter3.cpp)
 target_link_libraries(goal_setter3 ${catkin_LIBRARIES})
 
+add_executable(goal_setter3_1 src/goal_setter3_1.cpp)
+target_link_libraries(goal_setter3_1 ${catkin_LIBRARIES})
+
 #add_executable(people_position_server src/people_position_server.cpp)
 #target_link_libraries(people_position_server ${catkin_LIBRARIES})
 
