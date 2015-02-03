@@ -185,6 +185,9 @@ target_link_libraries(goal_manager ${catkin_LIBRARIES})
 add_executable(wander src/wander.cpp)
 target_link_libraries(wander ${catkin_LIBRARIES})
 
+add_executable(wander2_1 src/wander2_1.cpp)
+target_link_libraries(wander2_1 ${catkin_LIBRARIES})
+
 add_executable(wander2 src/wander2.cpp)
 target_link_libraries(wander2 ${catkin_LIBRARIES})
 

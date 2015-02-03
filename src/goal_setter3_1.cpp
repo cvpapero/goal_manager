@@ -26,7 +26,7 @@ public:
   {
     ROS_INFO("Waiting for action server to start.");
     //ac.waitForServer();
-    //ROS_INFO("Action server started, sending goal.");
+    ROS_INFO("Action server started, sending goal.");
 
     g_sub = n.subscribe("chatter", 1, &GoalSetter::callback, this);
     human_srv = n.serviceClient<humans_msgs::HumanSrv>("okao_srv");

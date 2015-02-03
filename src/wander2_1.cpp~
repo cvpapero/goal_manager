@@ -34,29 +34,29 @@ public:
     ac.waitForServer();
     ROS_INFO("Action server started, sending goal.");
 
-    goal_sub = n.subscribe("goal_pose", 1, &Wander::callback, this);
+ 
 
     geometry_msgs::Pose tmp;
-    tmp.position.x = 2.0;
-    tmp.position.y = -12.3; 
+    tmp.position.x = 0.0;
+    tmp.position.y = 0.0; 
     tmp.orientation.z = 0;
     tmp.orientation.w = 1;
     pose[0] = tmp;
 
-    tmp.position.x = 5.31;
-    tmp.position.y = -3.51; 
+    tmp.position.x = -1.08;
+    tmp.position.y = 5.77; 
     tmp.orientation.z = 0;
     tmp.orientation.w = 1;
     pose[1] = tmp;
 
-    tmp.position.x = 3.49;
-    tmp.position.y = -29.7; 
+    tmp.position.x = 0.0;
+    tmp.position.y = 10.4; 
     tmp.orientation.z = 0;
     tmp.orientation.w = 1;
     pose[2] = tmp;
 
-    tmp.position.x = 2.29;
-    tmp.position.y = -1.7; 
+    tmp.position.x = 2.83;
+    tmp.position.y = 4.84; 
     tmp.orientation.z = 0;
     tmp.orientation.w = 1;
     pose[3] = tmp;
@@ -126,9 +126,12 @@ public:
     goal.target_pose.header.stamp = ros::Time::now();
     ac.sendGoal(goal,
 		boost::bind(&Wander::doneCb, this, _1, _2),
-		MBClient::SimpleActiveCallback(),
-		//boost::bind(&Wander::feedbackCb, this, _1));
-		MBClient::SimpleFeedbackCallback());
+		boost::bind(&Wander::activeCb, this),
+		boost::bind(&Wander::feedbackCb, this, _1));
+		//MBClient::SimpleFeedbackCallback());
+
+    //boost::bind(&Wander::activeCb, this),
+    //		boost::bind(&Wander::feedbackCb, this, _1));
   }
 
   void callback(const geometry_msgs::PoseConstPtr& msg)
@@ -160,12 +163,6 @@ public:
 	goalSender( pose );
       }
   }
-
-
-
-
-
-
   
   void doneCb(const actionlib::SimpleClientGoalState& state,
 	      const move_base_msgs::MoveBaseResultConstPtr& result)
@@ -176,18 +173,6 @@ public:
 
     goalSender( goalDecider() );
 
-    /*
-    if(!(state == actionlib::SimpleClientGoalState::SUCCEEDED))
-      {
-	//中断したら、さっきいたゴール地点に戻る。
-	//goalDecider( pre_goal_id );
-      }
-    else
-      {
-	//もし成功したら、再びゴール地点を探す
-	//goalDecider( next_goal_id );
-      }
-    */
   }
   
   void activeCb()
@@ -195,9 +180,20 @@ public:
     ROS_INFO("Goal just went active.");
   }
 
-  void feedbackCb(const move_base_msgs::MoveBaseActionFeedbackConstPtr& feedback)
+  void feedbackCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
   {
-    std::cout << feedback << std::endl; 
+    std::cout << "feedback: " <<feedback << std::endl; 
+
+    //ros::goal_sub = n.subscribe("goal_pose", 1, &Wander::callback, this);
+    geometry_msgs::PoseConstPtr msg = ros::topic::waitForMessage<geometry_msgs::Pose>("goal_pose");
+    geometry_msgs::Pose pose;
+    pose.position = msg->position;
+    pose.orientation = msg->orientation;
+    if( pose.orientation.w )
+      {
+	cout<< "goal sub"<<endl;
+	goalSender( pose );
+      }
   }
 
 };

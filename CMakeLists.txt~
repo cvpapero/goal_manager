@@ -170,6 +170,9 @@ target_link_libraries(sample1 ${catkin_LIBRARIES})
 add_executable(goal_setter3 src/goal_setter3.cpp)
 target_link_libraries(goal_setter3 ${catkin_LIBRARIES})
 
+add_executable(goal_setter3_1 src/goal_setter3_1.cpp)
+target_link_libraries(goal_setter3_1 ${catkin_LIBRARIES})
+
 #add_executable(people_position_server src/people_position_server.cpp)
 #target_link_libraries(people_position_server ${catkin_LIBRARIES})
 
@@ -185,8 +188,8 @@ target_link_libraries(wander ${catkin_LIBRARIES})
 add_executable(wander2 src/wander2.cpp)
 target_link_libraries(wander2 ${catkin_LIBRARIES})
 
-add_executable(test_goal_publisher src/test_goal_publisher.cpp)
-target_link_libraries(test_goal_publisher ${catkin_LIBRARIES})
+add_executable(goal_wander src/goal_wander.cpp)
+target_link_libraries(goal_wander ${catkin_LIBRARIES})
 
 add_executable(now_position src/now_position.cpp)
 target_link_libraries(now_position ${catkin_LIBRARIES})
